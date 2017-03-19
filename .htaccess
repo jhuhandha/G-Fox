@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteRule ^Assets/(.*) Public/Assets/$1 [L]
+    RewriteRule ^/$ Public/index.php    [L]
+    RewriteRule ^(.*) Public/index.php?r=$1&%{QUERY_STRING} [L,NC]
+</IfModule>
