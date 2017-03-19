@@ -3,13 +3,13 @@
  * This class is the base of every application controller.
  * @package GF\Components
  * @author  Jorge Alejandro Quiroz Serna <alejo.jko@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @copyright (c) 2017 jakolab
  */
 
 namespace GF\Components;
 
-use GF\System;
+use GF\Web\FangTE\Fang;
 
 abstract class AppController extends AppComponent {
     /**
@@ -37,11 +37,16 @@ abstract class AppController extends AppComponent {
      * @var string
      */
     protected $content;
+    /**
+     * @var Fang
+     */
+    protected $fang;
 
     public function __construct(string $ID, Response &$response,  Request &$request){
         $this->ID = $ID;
         $this->request = $request;
         $this->response = $response;
+        $this->fang = new Fang();
     }
 
     /**
@@ -50,34 +55,30 @@ abstract class AppController extends AppComponent {
     public function init(){
         $this->layoutsPath = 'Layouts';
         $this->viewsPath = "Views.$this->ID";
+        $this->fang->init();
+        $this->fang->addDir($this->viewsPath);
     }
 
     /**
      * Render a view
      * @param string $view
      * @param array $params
-     * @throws \Exception if the path to the file doesn't exists.
      */
     protected function render(string $view, array $params = []){
         $viewPath = "$this->viewsPath.$view";
-        if(!System::fileExists($viewPath)){
-            throw new \Exception("The view '$view' does not exists for controller '$this->ID'");
-        }
-        $this->viewContent = $this->capture($viewPath, $params);
+        $this->fang->compile($viewPath);
+        $this->viewContent = $this->capture($this->fang->getCompileFile(), $params);
         $this->loadLayout();
         $this->response->setContent($this->content);
     }
 
     /**
      * Loads the content from the file.
-     * @throws \Exception If the path to the layout doesn't exists.
      */
     private function loadLayout(){
         $layoutPath = "$this->layoutsPath.$this->layout";
-        if(!System::fileExists($layoutPath)){
-            throw new \Exception("The layout '$this->layout' does not exists.");
-        }
-        $this->content = $this->capture($layoutPath);
+        $this->fang->compile($layoutPath);
+        $this->content = $this->capture($this->fang->getCompileFile());
     }
 
     /**
@@ -89,7 +90,7 @@ abstract class AppController extends AppComponent {
     private function capture(string $filePath, array $params = []){
         ob_start();
         foreach($params AS $k=>$v){  $$k = $v; }
-        include System::resolvePath($filePath, true);
+        include $filePath;
         return ob_get_clean();
     }
 }

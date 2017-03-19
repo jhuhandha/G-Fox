@@ -10,6 +10,7 @@ namespace Controllers;
 
 
 class Main  extends Controller {
+    public $name = "Class name";
     public function index(){
         $this->render('index', ['foo' => 'var']);
     }

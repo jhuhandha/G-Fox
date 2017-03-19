@@ -4,7 +4,7 @@
  * 
  * @package GF/utilities
  * @author  Jorge Alejandro Quiroz Serna (Jako) <alejo.jko@gmail.com>
- * @version  1.0.0 
+ * @version  1.0.1
  * @copyright (c) 2017, jakolab
  */
 return [
@@ -22,4 +22,5 @@ return [
 	'Views' => APP_DIR . DS . 'Views',
 	'Layouts' => APP_DIR . DS . 'Views' . DS . 'Layouts',
 	'Root' => ROOT_DIR,
+    'Web' => KERNEL_DIR . DS . 'Web',
 ];

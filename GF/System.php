@@ -5,7 +5,7 @@
  *
  * @package GF
  * @author  Jorge Alejandro Quiroz Serna (Jako) <alejo.jko@gmail.com>
- * @version  1.0.0 
+ * @version  1.0.1
  * @copyright (c) 2017, jakolab
  */
 namespace GF;
@@ -48,7 +48,7 @@ final class System {
 	 *                              absolute path.
 	 * @param boolean 	$once 		If the file should be included once
 	 * @return mixed	boolean | mixed false if it cannot import the file, otherwise 
-	 *                       it returns the filecontent.
+	 *                       it returns the file content.
 	 */
 	public static function import($resources, $useAlias = true, $once = true){
 		if(is_string($resources)){
@@ -56,6 +56,7 @@ final class System {
 		} else if(is_array($resources)){
 			return self::importMultimple($resources, $useAlias, $once);
 		}
+		return false;
 	}
 
 	/**
@@ -65,7 +66,7 @@ final class System {
 	 * @param  boolean 	$useAlias 	If the function should resolve the path.
 	 * @param boolean 	$once 		If the file should be included once
 	 * @return mixed	boolean | mixed false if it cannot import the file, otherwise 
-	 *                       it returns the filecontent.
+	 *                       it returns the file content.
 	 */
 	private static function importSingle($resource, $useAlias, $once){
 		if($useAlias){ $resource = self::resolvePath($resource, true); }
@@ -156,10 +157,23 @@ final class System {
 	 */
 	public static function fileExists($path, $isFile = true, $ext = 'php'){
 		if(strpos($path, "\\") != false){ $path = str_replace("\\", ".", $path); }
-		if($isFile){ $rp = self::resolvePath($path, $isFile, $ext); }
-		else { $rp = $path; }
-		return file_exists($rp);
+		if($isFile){
+		    $rp = self::resolvePath($path, $isFile, $ext);
+		} else {
+		    $rp = self::resolvePath($path, false);
+		}
+        return file_exists($rp);
 	}
+
+    /**
+     * Checks if the folder exists, if not, it creates it.
+     * @param string $path
+     */
+	public static function dir($path){
+        if(!self::fileExists($path, false)){
+            mkdir(self::resolvePath($path));
+        }
+    }
 
 	/**
 	 * Returns the system version

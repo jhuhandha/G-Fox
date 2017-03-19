@@ -1,0 +1,8 @@
+@: if(true): :@
+    <p>{{ $this->name }}</p>
+@: endif :@
+@: for ($i = 0; $i < 10; $i ++): :@
+    <p data-algo="">
+    {{ "Hello " .  "world!! " . $i }}
+    </p>
+@: endfor :@
